@@ -6,4 +6,4 @@ const studentSchema = new mongoose .Schema({
     major: String,
 });
 
-export default mongoose.model('students', studentSchema);
+export default mongoose.model('Student', studentSchema);
