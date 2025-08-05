@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const studentSchema = new mongoose .Schema({
+const studentSchema = new mongoose.Schema({
     name: {
         type:String,
         required: [true, "Name is required"],
@@ -22,7 +22,12 @@ const studentSchema = new mongoose .Schema({
     enrolledAt: {
         type: Date,
         default: Date.now
-    }
+    },
+      teacher: {
+    type: mongoose.Schema.Types.ObjectId,  
+    ref: "Teacher",                        
+  }
+
 });
 
 export default mongoose.model('Student', studentSchema);
