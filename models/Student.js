@@ -16,7 +16,6 @@ const studentSchema = new mongoose.Schema({
     major: {
         type: String,
         required: [true, "Major is required"],
-        enum: ["CS", "MATH", "PHYSICS", "CHEMISTRY", "English"],
         default: true
     },
     enrolledAt: {
@@ -29,5 +28,16 @@ const studentSchema = new mongoose.Schema({
   }
 
 });
+
+// middleware
+studentSchema.pre('save', function(next){
+    if(this.name){
+        this.name = this.name
+        .split(" ")
+        .map((word)=> word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+        .join(" ");
+    }
+    next();
+})
 
 export default mongoose.model('Student', studentSchema);
