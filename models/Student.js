@@ -7,11 +7,15 @@ const studentSchema = new mongoose.Schema({
     minlength: [3, "Name should be more than 3 characters"],
     trim: true,
   },
-  age: {
-    type: Number,
-    required: [true, "Age is required"],
-    min: [5, "Too Young"],
-    max: [100, "Too Old"],
+  lastName: {
+    type: String,
+    required: [true, "Name is required"],
+    minlength: [3, "Name should be more than 3 characters"],
+    trim: true,
+  },
+  dot: {
+    type: Date,
+    required: [true, "Must Enter Date of Birthday"],
   },
   major: {
     type: String,
@@ -48,6 +52,28 @@ studentSchema.query.byMajor = function (major) {
 studentSchema.query.byAge = function (age) {
   return this.where({ age: age });
 };
+
+studentSchema.virtual('fullname').get(function(){
+    return `${this.name} ${this.lastName}`
+})
+
+studentSchema.virtual('age').get(function(){
+    if(!this.dot) return null;
+    const today = new Date();
+    const birthdate = new Date(this.dob);
+    const age = today.getFullYear() - birthdate.getFullYear();
+
+    const monthDiff = today.getMonth() - birthdate.getMonth();
+    const dayDiff = today.getDate() - birthdate.getDate();
+
+    if ( monthDiff < 0 || ( monthDiff === 0 || dayDiff < 0 )){
+        age--;
+    }
+    return age;
+});
+
+studentSchema.set('toJSON', { virtuals: true });
+studentSchema.set('toObject', { virtuals: true });
 
 const Student = mongoose.model("Student", studentSchema);
 
