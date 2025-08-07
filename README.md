@@ -15,6 +15,12 @@ A focused Node.js + Express.js project designed to master Mongoose & MongoDB ess
   - Pagination (`?page=1&limit=5`)
 - ✅ Mongoose Middleware:
   - `pre("save")` – Capitalize student names before saving
+- ✅ Query Helpers:
+  - `.byMajor()` – Filter students by major
+  - `.byAge()` – Filter students by age
+- ✅ Mongoose Virtuals:
+  - `fullName` – Combines firstName and lastName
+  - `age` – Calculates age from DOB
 
 ---
 
@@ -75,4 +81,3 @@ To become confident in real-world Mongoose workflows – from basic schemas to m
 
 ### ⚡ Author
 **Faizan** – MERN Stack Developer
-
