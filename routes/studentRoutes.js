@@ -15,8 +15,8 @@ router.delete("/delete/:id", deleteStudent);
 
 router.get("/:major/:age", async (req, res) => {
   try {
-    const { major, age } = req.params;
-    const student = await Student.find().byMajor(major).byAge(age);
+    const { major } = req.params;
+    const student = await Student.find().byMajor(major);
     res.json(student);
   } catch (err) {
     console.log(err);

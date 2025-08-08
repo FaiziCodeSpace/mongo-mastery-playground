@@ -14,14 +14,13 @@ const studentSchema = new mongoose.Schema(
       minlength: [3, "Name should be more than 3 characters"],
       trim: true,
     },
-    dot: {
+    dob : {
       type: Date,
       required: [true, "Must Enter Date of Birthday"],
     },
     major: {
       type: String,
       required: [true, "Major is required"],
-      default: true,
     },
     enrolledAt: {
       type: Date,
@@ -37,7 +36,8 @@ const studentSchema = new mongoose.Schema(
     versionKey: false,
     timestamps: true,
     toJSON: true,
-    toObject: true 
+    toObject: true,
+    strict: "throw",
   }
 );
 
@@ -57,16 +57,13 @@ studentSchema.query.byMajor = function (major) {
   return this.where({ major: new RegExp(`^${major}$`, "i") }); // case-insensitive match
 };
 
-studentSchema.query.byAge = function (age) {
-  return this.where({ age: age });
-};
 
 studentSchema.virtual("fullname").get(function () {
   return `${this.name} ${this.lastName}`;
 });
 
 studentSchema.virtual("age").get(function () {
-  if (!this.dot) return null;
+  if (!this.dob) return null;
   const today = new Date();
   const birthdate = new Date(this.dob);
   const age = today.getFullYear() - birthdate.getFullYear();
@@ -79,6 +76,10 @@ studentSchema.virtual("age").get(function () {
   }
   return age;
 });
+
+
+studentSchema.index({name: 1}, { unique: true});
+studentSchema.index({major: 1}, { age: -1});
 
 // studentSchema.set('timestamps', true);              
 // studentSchema.set('versionKey', false);              
