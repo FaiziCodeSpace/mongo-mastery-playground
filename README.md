@@ -9,6 +9,10 @@ A focused Node.js + Express.js project designed to master Mongoose & MongoDB ess
 - ✅ Express server setup with MongoDB connection
 - ✅ RESTful API for Students (CRUD)
 - ✅ Mongoose Schema with validation
+- ✅ Mongoose Schema Options:
+  - `timestamps: true` – Auto-manage createdAt & updatedAt
+  - `versionKey: false` – Removes `__v` field from documents
+  - `toJSON` and `toObject` – Includes virtuals in output
 - ✅ Advanced Querying:
   - Filtering (`?major=Science`)
   - Sorting (`?sort=age`)
@@ -19,8 +23,11 @@ A focused Node.js + Express.js project designed to master Mongoose & MongoDB ess
   - `.byMajor()` – Filter students by major
   - `.byAge()` – Filter students by age
 - ✅ Mongoose Virtuals:
-  - `fullName` – Combines firstName and lastName
+  - `fullName` – Combines name and lastName
   - `age` – Calculates age from DOB
+- ✅ Mongoose Indexes:
+  - Unique index on `name`
+  - Compound index on `major` and `age`
 
 ---
 
@@ -49,7 +56,7 @@ npm install
 npm run dev
 ```
 
-Make sure to create a `.env` file:
+Create a `.env` file in the root directory:
 
 ```env
 PORT=5000
@@ -74,7 +81,7 @@ To become confident in real-world Mongoose workflows – from basic schemas to m
 
 ### 📌 Next Up
 - `pre("find")` middleware
-- `post("save")` & error handling
+- `post("save")` hook & error handling
 - Authentication, soft deletes & more!
 
 ---
