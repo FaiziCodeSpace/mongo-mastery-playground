@@ -62,6 +62,7 @@ studentSchema.pre(/^find/, function(next){
 studentSchema.post('save', function(doc){
   console.log(`Student Saved: ${doc.name}`);
 })
+
 // Query Helper
 studentSchema.query.byMajor = function (major) {
   return this.where({ major: new RegExp(`^${major}$`, "i") }); // case-insensitive match
@@ -97,6 +98,22 @@ studentSchema.index({major: 1, department: 1}); // Compound
 // studentSchema.set('versionKey', false);              
 //  studentSchema.set('toJSON', { virtuals: true });     
 // studentSchema.set('toObject', { virtuals: true }); 
+
+// Error Handling
+// This catches errors triggered by document middleware like save()
+studentSchema.post('save', function (error, doc, next) {
+  if (error && error.name === 'MongoServerError' && error.code === 11000) {
+    // duplicate key (E11000)
+    return next(new Error(`Duplicate value for field(s): ${JSON.stringify(error.keyValue)}`));
+  }
+  if (error && error.name === 'ValidationError') {
+    const messages = Object.values(error.errors).map(e => e.message);
+    return next(new Error(messages.join(', ')));
+  }
+  next(error);
+});
+
+
 
 const Student = mongoose.model("Student", studentSchema);
 
