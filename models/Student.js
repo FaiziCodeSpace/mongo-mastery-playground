@@ -42,6 +42,8 @@ const studentSchema = new mongoose.Schema(
 );
 
 // middleware
+
+// SAVE
 studentSchema.pre("save", function (next) {
   if (this.name) {
     this.name = this.name
@@ -51,7 +53,15 @@ studentSchema.pre("save", function (next) {
   }
   next();
 });
-
+// FIND 
+studentSchema.pre(/^find/, function(next){
+  this.populate({path: 'teacher', select: 'name'});
+  next();
+})
+// POST
+studentSchema.post('save', function(doc){
+  console.log(`Student Saved: ${doc.name}`);
+})
 // Query Helper
 studentSchema.query.byMajor = function (major) {
   return this.where({ major: new RegExp(`^${major}$`, "i") }); // case-insensitive match
@@ -78,8 +88,10 @@ studentSchema.virtual("age").get(function () {
 });
 
 
-studentSchema.index({name: 1}, { unique: true});
-studentSchema.index({major: 1}, { age: -1});
+studentSchema.pre
+
+studentSchema.index({name: 1}, { unique: true}); // single
+studentSchema.index({major: 1, department: 1}); // Compound
 
 // studentSchema.set('timestamps', true);              
 // studentSchema.set('versionKey', false);              
