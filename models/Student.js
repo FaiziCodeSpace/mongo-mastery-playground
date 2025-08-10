@@ -61,8 +61,7 @@ studentSchema.pre("save", function (next) {
 
 // FIND 
 studentSchema.pre(/^find/, function(next){
-  this.find({inactive: {$ne: false}})
-  .populate({path: 'teacher', select: 'name'});
+  this.find({inactive: {$ne: false}}).populate({path: 'teacher', select: 'name'});
   next();
 })
 // POST
