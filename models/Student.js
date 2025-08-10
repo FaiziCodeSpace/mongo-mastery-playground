@@ -66,8 +66,18 @@ studentSchema.pre(/^find/, function(next){
   next();
 })
 // POST
-studentSchema.post('save', function(doc){
+studentSchema.post('save', async function(doc){
+  try {
+    const preFix = 'STU';
+    const id = String(doc._id);
+    const paddedId = String(id).slice(-5).toUpperCase();
+    doc.rollNumber = `${preFix}-${paddedId}`;
+    await doc.constructor.findByIdAndUpdate(id, {rollNumber: rollNumber})
+  } catch (error) {
+    console.log(error);
+  }
   console.log(`Student Saved: ${doc.name}`);
+
 })
 
 // Query Helper
