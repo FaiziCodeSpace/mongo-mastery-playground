@@ -22,6 +22,11 @@ const studentSchema = new mongoose.Schema(
       type: String,
       required: [true, "Major is required"],
     },
+    active: {
+      type: Boolean,
+      default: true,
+      select: false
+    },
     enrolledAt: {
       type: Date,
       default: Date.now,
@@ -53,14 +58,26 @@ studentSchema.pre("save", function (next) {
   }
   next();
 });
+
 // FIND 
 studentSchema.pre(/^find/, function(next){
-  this.populate({path: 'teacher', select: 'name'});
+  this.find({inactive: {$ne: false}})
+  .populate({path: 'teacher', select: 'name'});
   next();
 })
 // POST
-studentSchema.post('save', function(doc){
+studentSchema.post('save', async function(doc){
+  try {
+    const preFix = 'STU';
+    const id = String(doc._id);
+    const paddedId = String(id).slice(-5).toUpperCase();
+    doc.rollNumber = `${preFix}-${paddedId}`;
+    await doc.constructor.findByIdAndUpdate(id, {rollNumber: rollNumber})
+  } catch (error) {
+    console.log(error);
+  }
   console.log(`Student Saved: ${doc.name}`);
+
 })
 
 // Query Helper
@@ -89,15 +106,17 @@ studentSchema.virtual("age").get(function () {
 });
 
 
-studentSchema.pre
+
 
 studentSchema.index({name: 1}, { unique: true}); // single
 studentSchema.index({major: 1, department: 1}); // Compound
+
 
 // studentSchema.set('timestamps', true);              
 // studentSchema.set('versionKey', false);              
 //  studentSchema.set('toJSON', { virtuals: true });     
 // studentSchema.set('toObject', { virtuals: true }); 
+
 
 // Error Handling
 // This catches errors triggered by document middleware like save()
@@ -112,7 +131,6 @@ studentSchema.post('save', function (error, doc, next) {
   }
   next(error);
 });
-
 
 
 const Student = mongoose.model("Student", studentSchema);
