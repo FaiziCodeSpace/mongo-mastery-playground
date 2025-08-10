@@ -30,6 +30,8 @@ A focused Node.js + Express.js project designed to master Mongoose & MongoDB ess
   - Compound index on `major` and `age`
 - ✅ Auto-populate and Post-save action
 - ✅ Schema-level Error Handling (duplicates & validation)
+- ✅ add roll number generation post-save
+- ✅ Add pre(find) middleware to exclude inactive students from queries
 
 ---
 
