@@ -98,7 +98,7 @@ studentSchema.virtual("age").get(function () {
   const monthDiff = today.getMonth() - birthdate.getMonth();
   const dayDiff = today.getDate() - birthdate.getDate();
 
-  if (monthDiff < 0 ||( monthDiff === || dayDiff < 0)) {
+  if (monthDiff < 0 ||( monthDiff === 0 || dayDiff < 0)) {
     age--;
   }
   return age;
@@ -132,6 +132,9 @@ studentSchema.post('save', function (error, doc, next) {
 });
 
 
+
+
 const Student = mongoose.model("Student", studentSchema);
 
 export default Student;
+
