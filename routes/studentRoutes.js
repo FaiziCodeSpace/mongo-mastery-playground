@@ -13,7 +13,7 @@ router.post("/", postStudent);
 router.put("/update/:id", updateStudent);
 router.delete("/delete/:id", deleteStudent);
 
-router.get("/:major/:age", async (req, res) => {
+router.get("/:major", async (req, res) => {
   try {
     const { major } = req.params;
     const student = await Student.find().byMajor(major);
