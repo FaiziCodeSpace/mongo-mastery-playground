@@ -61,7 +61,7 @@ studentSchema.pre("save", function (next) {
 
 // FIND 
 studentSchema.pre(/^find/, function(next){
-  this.find({inactive: {$ne: false}}).populate({path: 'teacher', select: 'name'});
+  this.find({active: {$ne: false}}).populate({path: 'teacher', select: 'name'});
   next();
 })
 // POST
@@ -69,9 +69,9 @@ studentSchema.post('save', async function(doc){
   try {
     const preFix = 'STU';
     const id = String(doc._id);
-    const paddedId = String(id).slice(-5).toUpperCase();
+    const paddedId = id.slice(-5).toUpperCase();
     doc.rollNumber = `${preFix}-${paddedId}`;
-    await doc.constructor.findByIdAndUpdate(id, {rollNumber: rollNumber})
+    await doc.constructor.findByIdAndUpdate(id, {rollNumber: doc.rollNumber})
   } catch (error) {
     console.log(error);
   }
@@ -98,7 +98,7 @@ studentSchema.virtual("age").get(function () {
   const monthDiff = today.getMonth() - birthdate.getMonth();
   const dayDiff = today.getDate() - birthdate.getDate();
 
-  if (monthDiff < 0 || monthDiff === 0 || dayDiff < 0) {
+  if (monthDiff < 0 ||( monthDiff === || dayDiff < 0)) {
     age--;
   }
   return age;
