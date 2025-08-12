@@ -55,6 +55,12 @@ const studentWithTeacher = await Student.aggregate([
   { $project: { name: 1, "teacherInfo.name": 1 } }
 ])
 
+const recentStudents = await Student.aggregate([
+  { $sort: { enrolledAt: -1 } },
+  { $limit: 5 },
+  { $project: { name: 1, lastName: 1, enrolledAt: 1 } }
+]);
+console.log(recentStudents);
 
 
 console.log(averageAge);
