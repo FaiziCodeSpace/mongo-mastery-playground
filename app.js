@@ -40,6 +40,23 @@ const averageAge = await Student.aggregate([
     },
   },
 ]);
+
+const studentWithTeacher = await Student.aggregate([
+  {$match: {active: true}},
+  {
+    $lookup: {
+      from: "teachers",
+      localField: "teacher",
+      foreignField: "_Id",
+      as: "teacherInfo"
+    }
+  },
+  { $unwind: "$teacherInfo" },
+  { $project: { name: 1, "teacherInfo.name": 1 } }
+])
+
+
+
 console.log(averageAge);
 
 app.listen(PORT, () => {
