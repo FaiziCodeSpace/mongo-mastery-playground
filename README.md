@@ -36,22 +36,6 @@ A focused Node.js + Express.js project designed to master Mongoose & MongoDB ess
 
 ---
 
-### 📂 Project Structure
-```
-├── config/
-│   └── db.js
-├── models/
-│   └── Student.js
-├── routes/
-│   └── studentRoutes.js
-├── controllers/
-│   └── studentController.js
-├── .env
-├── server.js
-```
-
----
-
 ### 🧪 How to Run
 
 ```bash
