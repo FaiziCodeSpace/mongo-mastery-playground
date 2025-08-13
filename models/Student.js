@@ -42,7 +42,6 @@ const studentSchema = new mongoose.Schema(
     timestamps: true,
     toJSON: true,
     toObject: true,
-    strict: "throw",
   }
 );
 
@@ -64,6 +63,7 @@ studentSchema.pre(/^find/, function(next){
   this.find({active: {$ne: false}}).populate({path: 'teacher', select: 'name'});
   next();
 })
+
 // POST
 studentSchema.post('save', async function(doc){
   try {
@@ -83,7 +83,6 @@ studentSchema.post('save', async function(doc){
 studentSchema.query.byMajor = function (major) {
   return this.where({ major: new RegExp(`^${major}$`, "i") }); // case-insensitive match
 };
-
 
 studentSchema.virtual("fullname").get(function () {
   return `${this.name} ${this.lastName}`;
@@ -109,6 +108,7 @@ studentSchema.virtual("age").get(function () {
 
 studentSchema.index({name: 1}, { unique: true}); // single
 studentSchema.index({major: 1, department: 1}); // Compound
+studentSchema.index({ teacher: 1 });
 
 
 // studentSchema.set('timestamps', true);              
