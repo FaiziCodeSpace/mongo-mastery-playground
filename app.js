@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import studentRouter from "./routes/studentRoutes.js";
+import teacherRouter from "./routes/teacherRoutes.js";
 
 const PORT = process.env.PORT;
 connectDB();
@@ -10,6 +11,7 @@ dotenv.config();
 app.use(express.json());
 
 app.use("/students", studentRouter);
+app.use("/teachers", teacherRouter);
 
 // Aggregation
 // const totalStudents = await Student.aggregate([
