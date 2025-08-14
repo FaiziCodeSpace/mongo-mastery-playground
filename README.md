@@ -68,12 +68,9 @@ To become confident in real-world Mongoose workflows – from basic schemas to m
 
 ---
 
-### 📌 Next Up
-- `pre("find")` middleware
-- `post("save")` hook & error handling
-- Authentication, soft deletes & more!
+Fixing Mongoose Transaction Hang with Replica Set
 
----
+While implementing a assignTeacherWithStudent transaction in MongoDB (Replica Set mode), I ran into an issue where the API kept loading and the transaction would eventually abort.
 
 ### ⚡ Author
 **Faizan** – MERN Stack Developer
