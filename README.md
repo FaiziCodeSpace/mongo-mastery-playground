@@ -78,6 +78,8 @@ The transaction was hanging because of how MongoDB handles writeConcern in repli
 
 # What I Tried
 - Verified replica set status with rs.status() → all members were healthy and in sync.
+- Checked connection string — made sure it included all nodes and ?replicaSet=rs0.
+- Confirmed session handling in all queries inside withTransaction.
 
 
 
