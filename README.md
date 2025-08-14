@@ -68,9 +68,18 @@ To become confident in real-world Mongoose workflows – from basic schemas to m
 
 ---
 
-Fixing Mongoose Transaction Hang with Replica Set
+# Fixing Mongoose Transaction Hang with Replica Set
 
 While implementing a assignTeacherWithStudent transaction in MongoDB (Replica Set mode), I ran into an issue where the API kept loading and the transaction would eventually abort.
+
+# Issue
+
+The transaction was hanging because of how MongoDB handles writeConcern in replica sets. By default, it waits for w: "majority", which caused delays in my local setup.
+
+# What I Tried
+- Verified replica set status with rs.status() → all members were healthy and in sync.
+
+
 
 ### ⚡ Author
 **Faizan** – MERN Stack Developer
