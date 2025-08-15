@@ -10,6 +10,7 @@ connectDB();
 const app = express();
 dotenv.config();
 app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 
 app.use("/students", studentRouter);
 app.use("/teachers", teacherRouter);

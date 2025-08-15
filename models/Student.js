@@ -65,19 +65,28 @@ studentSchema.pre(/^find/, function(next){
 })
 
 // POST
-studentSchema.post('save', async function(doc){
+studentSchema.post('save', async function (doc, next) {
   try {
     const preFix = 'STU';
     const id = String(doc._id);
     const paddedId = id.slice(-5).toUpperCase();
     doc.rollNumber = `${preFix}-${paddedId}`;
-    await doc.constructor.findByIdAndUpdate(id, {rollNumber: doc.rollNumber})
+
+    // Get the session from the save() call if exists
+    const session = doc.$session();
+
+    const query = doc.constructor.findByIdAndUpdate(id, { rollNumber: doc.rollNumber });
+    if (session) query.session(session); // <-- attach session if in transaction
+
+    await query;
   } catch (error) {
     console.log(error);
+    return next(error);
   }
   console.log(`Student Saved: ${doc.name}`);
+  next();
+});
 
-})
 
 // Query Helper
 studentSchema.query.byMajor = function (major) {

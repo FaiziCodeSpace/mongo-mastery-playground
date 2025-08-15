@@ -1,59 +1,69 @@
-import mongoose from "mongoose";    
-import Student from "../models/Student.js";    
+// controllers/assignTeacher.js
+import mongoose from "mongoose";
+import Student from "../models/Student.js";
 import Teacher from "../models/Teacher.js";
 
 export const assignTeacherWithStudent = async (req, res) => {
-  const { studentId, teacherId } = req.body;
   const session = await mongoose.startSession();
-  let resultMessage = "";
+  const { studentId, teacherId } = req.body;
 
   console.log("📥 Incoming request body:", req.body);
 
   try {
-    await session.withTransaction(async () => {
-      console.log("🔹 Transaction started");
+    if (!studentId || !teacherId) {
+      return res.status(400).json({ ok: false, message: "studentId and teacherId are required" });
+    }
 
-      // Step 1: Find student
-      console.log("🔍 Finding student:", studentId);
-      const student = await Student.findById(studentId).session(session);
-      if (!student) throw new Error("Student does not exist!");
-      console.log("✅ Student found:", student.name);
+    console.log("🔹 Transaction started");
+    let result = null;
 
-      // Step 2: Find teacher
-      console.log("🔍 Finding teacher:", teacherId);
-      const teacher = await Teacher.findById(teacherId).session(session);
-      if (!teacher) throw new Error("Teacher does not exist!");
-      console.log("✅ Teacher found:", teacher.name);
+    await session.withTransaction(
+      async () => {
+        console.log("🔍 Finding student:", studentId);
+        const student = await Student.findById(studentId).session(session);
+        if (!student) throw new Error("Student not found");
+        console.log("✅ Student found:", student.name ?? student._id.toString());
 
-      // Step 3: Assign teacher to student
-      console.log("📝 Assigning teacher to student...");
-      student.teacher = teacher._id;
-      await student.save({ session });
-      console.log("✅ Student updated");
+        console.log("🔍 Finding teacher:", teacherId);
+        const teacher = await Teacher.findById(teacherId).session(session);
+        if (!teacher) throw new Error("Teacher not found");
+        console.log("✅ Teacher found:", teacher.name ?? teacher._id.toString());
 
-      // Step 4: Add student to teacher's list if not already assigned
-      console.log("🔍 Checking if student already in teacher's list...");
-      const alreadyAssigned = teacher.students.some(id => id.equals(student._id));
-      console.log("Already assigned?", alreadyAssigned);
+        console.log("📝 Assigning teacher to student...");
 
-      if (!alreadyAssigned) {
-        console.log("➕ Adding student to teacher...");
-        teacher.students.push(student._id);
-        teacher.studentCount += 1;
-        await teacher.save({ session });
+        // 1) set the student's teacher
+        student.teacher = teacher._id;
+        console.log("➡️  Saving student...");
+        await student.save({ session, validateModifiedOnly: true });
+        console.log("✅ Student saved");
+
+        // 2) add the student to teacher.students (use $addToSet to avoid dupes)
+        console.log("➡️  Updating teacher...");
+        await Teacher.updateOne(
+          { _id: teacher._id },
+          { $addToSet: { students: student._id } },
+          { session, runValidators: true }
+        );
         console.log("✅ Teacher updated");
+
+        result = { student: student._id, teacher: teacher._id };
+      },
+      {
+        readPreference: "primary",
+        readConcern: { level: "local" },
+        writeConcern: { w: "majority" },
       }
+    );
 
-      resultMessage = "Teacher assigned to student successfully!";
-      console.log("🎯 Transaction finished successfully");
-    });
-
-    res.status(200).json({ message: resultMessage });
-  } catch (error) {
-    console.error("❌ Transaction error:", error.message);
-    res.status(500).json({ error: error.message });
+    console.log("✅ Transaction committed");
+    return res.status(200).json({ ok: true, message: "Teacher assigned", data: result });
+  } catch (err) {
+    console.error("❌ Transaction failed:", err);
+    // If withTransaction threw, the transaction is already aborted; this is a safe extra guard:
+    try { await session.abortTransaction(); } catch (_) {}
+    return res.status(500).json({ ok: false, message: err.message });
   } finally {
-    await session.endSession();
-    console.log("🔹 Session ended");
+    session.endSession();
+    console.log("🔚 Session ended");
   }
 };
