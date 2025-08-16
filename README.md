@@ -19,6 +19,8 @@ A focused Node.js + Express.js project designed to master Mongoose & MongoDB ess
   - Pagination (`?page=1&limit=5`)
 - ✅ Mongoose Middleware:
   - `pre("save")` – Capitalize student names before saving
+  - `pre("find")` – Exclude inactive students from queries
+  - `pre("findOneAndDelete")` – Decrement teacher’s student count on student deletion
 - ✅ Query Helpers:
   - `.byMajor()` – Filter students by major
   - `.byAge()` – Filter students by age
@@ -28,11 +30,17 @@ A focused Node.js + Express.js project designed to master Mongoose & MongoDB ess
 - ✅ Mongoose Indexes:
   - Unique index on `name`
   - Compound index on `major` and `age`
-- ✅ Auto-populate and Post-save action
+- ✅ Auto-populate teacher reference on student queries
+- ✅ Post-save actions:
+  - Roll number generation
+  - Trigger related updates
 - ✅ Schema-level Error Handling (duplicates & validation)
-- ✅ add roll number generation post-save
-- ✅ Add pre(find) middleware to exclude inactive students from queries
-- ✅ Aggregation
+- ✅ Aggregation pipelines for reporting
+- ✅ Transactions (assign teacher ↔ student with rollback on error)
+- ✅ Subdocuments & Nested Schemas (e.g., Address inside Student)
+- ✅ Repo workflow:
+  - Branching strategy
+  - Detailed commit messages & PR templates
 
 ---
 
@@ -64,7 +72,7 @@ MONGO_URI=your_mongodb_connection_uri
 ---
 
 ### 🎯 Goal
-To become confident in real-world Mongoose workflows – from basic schemas to middleware and complex queries.
+To become confident in real-world Mongoose workflows – from basic schemas to middleware, transactions, and complex queries.
 
 ---
 
