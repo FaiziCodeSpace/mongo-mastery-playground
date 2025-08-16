@@ -46,7 +46,23 @@ const studentSchema = new mongoose.Schema(
 );
 
 // middleware
-
+// Delete
+studentSchema.post("findByIdAndDelete", async (doc, next)=>{
+  try {
+    if(doc && doc.teacher){
+      await mongoose.model("Teacher").updateOne(
+        {id: teacher._id},
+        {
+          $pull: {student: doc.id},
+          $inc: {studentCount: -1},
+        }
+      );
+    }
+    next();
+  } catch (error) {
+    next(error);
+  }
+})
 // SAVE
 studentSchema.pre("save", function (next) {
   if (this.name) {
