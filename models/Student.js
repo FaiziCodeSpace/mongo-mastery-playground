@@ -36,6 +36,7 @@ const studentSchema = new mongoose.Schema(
       ref: "Teacher",
     },
     department: String,
+    address: [addressSchema],
   },
   {
     versionKey: false,
@@ -44,7 +45,11 @@ const studentSchema = new mongoose.Schema(
     toObject: true,
   }
 );
-
+// Nested document - Student Address
+const addressSchema = new mongoose.Schema({
+  street: String,
+  city: String,
+}, {_id: false});
 // middleware
 // Delete
 studentSchema.post("findByIdAndDelete", async (doc, next)=>{
