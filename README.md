@@ -41,6 +41,7 @@ A focused Node.js + Express.js project designed to master Mongoose & MongoDB ess
 - ✅ Repo workflow:
   - Branching strategy
   - Detailed commit messages & PR templates
+- ✅ Change Stream
 
 ---
 
